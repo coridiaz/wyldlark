@@ -1,20 +1,41 @@
 start: sentence
 
-sentence: (cast | action)
+sentence: cast | action | inventory_action
 
-cast: cast_action preposition object
+cast: "cast" spell preposition ["the" | "a"] object
 
-cast_action: "cast" spell
+action: verb [preposition] ["the" | "a"] object 
+
+inventory_action: use | add
+
+use: "use" item [preposition object]
+
+add: "pickup" item
 
 spell:  "fire"
         | "water"
         | "earth"
         | "air"
-
-
-
+      
+// list accepted verbs      
+verb: "knock"
+      | "break"
+      
+// make separate accepted spell-only prepositions? 
+// and then a list of others for everything ?
+preposition: "on"
+             | "at"
+                       
+object: "sprout"
+        | "door"
+        | "fireplace"
 
 // inventory items
-item:
+item: "spellbook"
+      | "key"
+      | "lantern"
+      | "potion"
+      | "knife"
 
 
+%ignore " "
