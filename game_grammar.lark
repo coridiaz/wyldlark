@@ -1,0 +1,20 @@
+start: sentence
+
+sentence: (cast | action)
+
+cast: cast_action preposition object
+
+cast_action: "cast" spell
+
+spell:  "fire"
+        | "water"
+        | "earth"
+        | "air"
+
+
+
+
+// inventory items
+item:
+
+
