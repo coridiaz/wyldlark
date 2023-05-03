@@ -64,7 +64,7 @@ inventory = ["spellbook"]
 
 def translate(tree):
     transformer = GrammarTransformer()
-    # print(tree)
+    print(tree)
     if tree.data == 'start':
         for child in tree.children:
             return translate(child)
@@ -76,9 +76,12 @@ def translate(tree):
     elif tree.data == 'action':
         pass
     elif tree.data == 'inventory_action':
+        print(tree.data)
+        pass
         # for child in tree.children:
         #     return translate(child)
-        pass
+    # elif tree.data == 'open backpack':
+    #     open_inventory()
     elif tree.data == 'exit':
         return end_game()
     else:
@@ -122,6 +125,12 @@ def use_object(object):
     pass
 
 
+def open_inventory():
+    global inventory
+    for item in inventory:
+        print(item + '\n')
+
+
 def end_game():
     print("\nGoodbye.")
     global game
@@ -150,7 +159,7 @@ def main():
 
     ### TESTING ### 
 
-    user_input = 'cast air at mist'
+    user_input = 'open backpack'
     try:
         parse_tree = parser.parse(user_input)
         translate(parse_tree)
