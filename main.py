@@ -86,9 +86,9 @@ def translate(tree):
 
 
 def cast_spell(tree, transformer):
-    # print(transformer.get_spell(tree) + '\n')
-    transformer.get_spell(tree)
+    # transformer.get_spell(tree)
     # print(tree)
+    print()
 
 
 #     if tree.data == 'spell':
@@ -160,7 +160,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-# cast fire at object -> object burns and then magically...
