@@ -27,13 +27,14 @@ grammar = '''
 
     SPELL:  "fire" | "water" | "earth" | "air"
          
-    VERB: "knock" | "break"
+    VERB: "knock" | "break" | "enter" | "go inside"
 
     PREPOSITION: "on" | "at" | "in"
                         
-    OBJECT: "sprout" | "door" | "fireplace" | "mist"
+    OBJECT: "sprout" | "door" | "fireplace" | "mist" | "vines" | "embers" | "bookshelf" | "bookshelves" 
+            | "knick-knacks" | "books" | "volumes" | "hole" | "void"
 
-    ITEM: "key" | "lantern" | "potion" | "dagger" | "spellbook"
+    ITEM: "key" | "lantern" | "potion" | "dagger" | "spellbook" | "papers" | "hat" | "scarf" 
 
     %import common.WS 
     %ignore WS 
@@ -78,12 +79,16 @@ def translate(tree):
         return
 
 
+### GAME FUNCTIONS ###
+
 def cast_spell(spell, object):
     if spell == 'fire':
         if object == 'door':
             open_door()
-        elif object == 'fireplace':
+        elif object == 'fireplace' or object == 'embers':
             print('\nThe fireplace erupts with a warm glow illuminating the room.\n')
+        elif object == "vines":
+            clear_vines()
         elif object == 'mist':
             random_reply()
         else:
@@ -119,21 +124,20 @@ def perform_action(verb, object):
             random_reply()
         elif verb == 'break':
             open_door()
+    elif object == 'hole' or object == 'void' and verb == 'enter' or "go inside":
+            enter_void()
     else:
         random_reply()
 
 
 def use_item(item, object):
-    if item == 'key':
-        if object == 'door':
+    if item == 'key' and object == 'door':
             open_door()
-        else:
-            random_reply()
+    elif item == 'dagger' and object == 'vines':
+        clear_vines()
     else:
         random_reply()
     
-
-### GAME FUNCTIONS ###
 
 def add_item(item):
     global inventory
@@ -180,7 +184,8 @@ def clear_mist():
 
 def reveal_door():
     print(dedent('''
-    The sprout shoots farther and farther out of the earth. It grows limbs that twist in on itself and become gnarled. 
+    The sprout shoots farther and farther out of the earth. 
+    It grows limbs that twist in on itself and become gnarled. 
     In place of the sprout a weathered old tree now stands. 
     
     At the base of the tree is a wooden door with a small stained glass window. A dim light glows behind it.  
@@ -189,9 +194,27 @@ def reveal_door():
 
 def open_door():
     print(dedent('''
-    The door swings open to a round room...
+    The door swings open to a round room. 
+    It appears void of life other than the green vines obscuring much of the walls and floor.
+    A fireplace sits on the far side, casting a slight glow from dying embers.
+    There are bookshelves stuffed with old volumes and knick-knacks.
+
+    A worn sofa sits in front of the fire next to a table with crumpled papers and a single potion.
+    On the wall hangs a single hat and scarf along with a sheath with a jeweled dagger inside.
     '''))
-    
+
+
+def clear_vines():
+    print(dedent('''
+    With the vines out of the way, you see a gaping hole in the floor.
+    It's dark beyond, you cannot see anything."
+    '''))
+
+
+def enter_void():
+    for i in range(0,10):
+        print('\n')
+
 
 def random_reply():
     responses = ('*crickets*', 'nothing happens.', '*gentle breeze*', '*trees groaning*')
@@ -223,20 +246,6 @@ def main():
         except:
             random_reply()
 
-
-    ### TESTING ### 
-
-    # user_input = 'cast earth at fireplace'
-    # user_input = 'read spellbook'
-    # user_input = "pickup dagger"
-
-    # try:
-    #     parse_tree = parser.parse(user_input)
-    #     translate(parse_tree)
-    # except:
-    #     random_reply()  
-
-    # print(parse_tree.pretty())
 
 if __name__ == '__main__':
     main()
