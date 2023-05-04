@@ -3,13 +3,15 @@ from textwrap import dedent
 from random import randint
 
 grammar = ''' 
-    start: ((cast | action | inventory_action) [punctuation])* | exit [punctuation]
+    start: ((cast | action | inventory_action | open_inventory) [punctuation])* | exit [punctuation]
 
     cast: "cast" spell [preposition] ["the" | "a"] object 
 
     action: verb [preposition] ["the" | "a"] object 
 
-    inventory_action: use | add | "read spellbook" | "open backpack"
+    inventory_action: use | add | "read spellbook" 
+
+    open_inventory: "open inventory" | "open backpack"
 
     exit: "end game" | "exit game" | "escape"
 
@@ -46,6 +48,7 @@ class GrammarTransformer(Transformer):
         # print('here\n')
         print(item)
         # return item[0]
+        pass
     
     def get_object(self, item):
         return item[-1]
@@ -63,8 +66,8 @@ inventory = ["spellbook"]
 ### GRAMMAR FUNCTIONS ###
 
 def translate(tree):
-    transformer = GrammarTransformer()
-    print(tree)
+    # transformer = GrammarTransformer()
+    # print(tree)
     if tree.data == 'start':
         for child in tree.children:
             return translate(child)
@@ -72,16 +75,13 @@ def translate(tree):
         for child in tree.children:
             return translate(child)
     elif tree.data == 'spell':
-        return cast_spell(tree, transformer)
+        
+        # return cast_spell(tree, transformer)
+        return cast_spell(tree, None)
     elif tree.data == 'action':
         pass
-    elif tree.data == 'inventory_action':
-        print(tree.data)
-        pass
-        # for child in tree.children:
-        #     return translate(child)
-    # elif tree.data == 'open backpack':
-    #     open_inventory()
+    elif tree.data == 'open_inventory':
+        open_inventory()
     elif tree.data == 'exit':
         return end_game()
     else:
@@ -127,6 +127,7 @@ def use_object(object):
 
 def open_inventory():
     global inventory
+    print("Backpack Inventory:")
     for item in inventory:
         print(item + '\n')
 
