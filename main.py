@@ -3,36 +3,41 @@ from textwrap import dedent
 from random import randint
 
 grammar = ''' 
-    start: ((cast | action | inventory_action | open_inventory | book) [PUNCTUATION])* | exit [PUNCTUATION]
+    start: (cast | action | inventory_action | open_inventory | book | help) [PUNCTUATION]
+            | exit [PUNCTUATION]
 
     cast: "cast" SPELL [PREPOSITION] ["the" | "a"] OBJECT 
 
     action: VERB [PREPOSITION] ["the" | "a"] OBJECT 
 
-    inventory_action: use | add  | drop
+    inventory_action: use | add  | drop | drink
 
     open_inventory: "open inventory" | "open backpack"
 
     exit: "end game" | "exit game" | "escape" | "exit"
 
-    use: "use" ["the"] ITEM [PREPOSITION OBJECT]
+    use: "use" ["the"] ITEM [PREPOSITION] ["the"] [OBJECT] 
 
     add: ("pickup" | "add") ["the"] ITEM 
 
     drop: ("drop" | "remove" | "get rid of") ["the"] ITEM
 
+    drink: ("drink" | "use") ["the"] "potion" 
+
     book: "read spellbook" | "open spellbook"
+
+    help: "help" | "help me" 
 
     PUNCTUATION: "." | "!" | "?" | ","
 
     SPELL:  "fire" | "water" | "earth" | "air"
          
-    VERB: "knock" | "break" | "enter" | "go inside"
+    VERB: "knock" | "break" | "enter" | "go inside" 
 
     PREPOSITION: "on" | "at" | "in"
                         
     OBJECT: "sprout" | "door" | "fireplace" | "mist" | "vines" | "embers" | "bookshelf" | "bookshelves" 
-            | "knick-knacks" | "books" | "volumes" | "hole" | "void"
+            | "knick-knack" | "book" | "volume" | "hole" | "void" | "sofa" | "paper"
 
     ITEM: "key" | "lantern" | "potion" | "dagger" | "spellbook" | "papers" | "hat" | "scarf" 
 
@@ -69,10 +74,14 @@ def translate(tree):
         return add_item(tree.children[-1].value)
     elif tree.data == 'drop':
         return drop_item(tree.children[-1].value)
+    elif tree.data == 'drink':
+        return drink_potion()
     elif tree.data == 'open_inventory':
         return open_inventory()
     elif tree.data == 'book':
         return print_spells()
+    elif tree.data == 'help':
+        print_help()
     elif tree.data == 'exit':
         return end_game()
     else:
@@ -105,10 +114,10 @@ def cast_spell(spell, object):
     elif spell == 'earth':
         if object == 'sprout':
             reveal_door()
-        elif object == 'mist':
+        elif object == 'mist' or object == 'vines':
             random_reply()
         else:
-            print('\nFor a moment it appears the ' + object + ' is weathered and cracked, and an')
+            print('\nFor a moment ' + object + ' appears weathered and cracked and an')
             print('ancient presence fills the room. In a blink the feeling is gone.') 
             print('The ' + object + ' appears unphased.\n')
     elif spell == 'air':
@@ -135,6 +144,8 @@ def use_item(item, object):
             open_door()
     elif item == 'dagger' and object == 'vines':
         clear_vines()
+    elif item == "potion":
+        drink_potion()
     else:
         random_reply()
     
@@ -150,7 +161,8 @@ def add_item(item):
 
 def drop_item(item):
     if item == 'spellbook':
-        print('\nThe book almost hits the ground before it vanishes into thin air...\nand reappears in your backpack.\n')
+        print('\nThe book almost hits the ground before it vanishes into thin air...')
+        print('and reappears in your backpack.\n')
     else:
         global inventory
         if item in inventory:
@@ -178,6 +190,18 @@ def print_spells():
     '''))
 
 
+def print_help():
+    print(dedent('''
+    Help:
+    Interact: <verb> the <object>
+    Cast Spell: <cast> <spell> at <object>
+    Open Inventory: <open> <backpack/inventory>
+    Check Spells: <read spellbook>
+    Use Item: <use> <item>
+    End Game: <escape/exit>
+    '''))
+
+
 def clear_mist():
     print('\nThe mist crawls towards the treeline, revealing a single sprout in the center of the clearing.\n')
 
@@ -199,21 +223,38 @@ def open_door():
     A fireplace sits on the far side, casting a slight glow from dying embers.
     There are bookshelves stuffed with old volumes and knick-knacks.
 
-    A worn sofa sits in front of the fire next to a table with crumpled papers and a single potion.
-    On the wall hangs a single hat and scarf along with a sheath with a jeweled dagger inside.
+    A worn sofa sits in front of the fireplace next to a table with crumpled papers and a single potion.
+    On the wall hangs a single hat and scarf along with a sheath containing a jeweled dagger.
+    '''))
+
+
+def drink_potion():
+    print(dedent('''
+    The room starts to spin slightly and the walls, the walls look like they are melting. 
+    You lie down and close your eyes, willing it to stop.
+    It does. When you open them you feel calm, almost peaceful.
+
+    Everything looks normal.
     '''))
 
 
 def clear_vines():
     print(dedent('''
     With the vines out of the way, you see a gaping hole in the floor.
-    It's dark beyond, you cannot see anything."
+    It's dark beyond, you cannot see anything.
     '''))
 
 
 def enter_void():
     for i in range(0,10):
         print('\n')
+    print(dedent('''
+    After a long walk down a dank corridor, you see a glowing light. 
+    As you get closer, a room comes into view.
+    Inside someone eerily familiar sits in front of computer, staring at the screen. 
+    '''))
+    end_game()
+
 
 
 def random_reply():

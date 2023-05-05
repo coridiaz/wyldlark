@@ -1,0 +1,7 @@
+read spellbook
+cast air at mist
+cast earth at the sprout
+use key in the door
+pickup dagger
+use dagger on the vines
+enter the void
